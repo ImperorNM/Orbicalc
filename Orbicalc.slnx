@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="OrbicalcLib/OrbicalcLib.csproj" />
+  <Project Path="OrbicalcWindows/OrbicalcWindows.csproj" Id="1d8955ee-e160-417d-8b8c-503271f51a95" />
+</Solution>

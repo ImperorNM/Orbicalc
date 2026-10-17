@@ -1,0 +1,373 @@
+﻿<Window x:Class="OrbicalcWindows.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Orbicalc Desktop"
+        Height="780"
+        Width="1300"
+        Background="#1E1E1E">
+
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="6" />
+            <ColumnDefinition Width="280" />
+            <ColumnDefinition Width="6" />
+            <ColumnDefinition Width="320" />
+        </Grid.ColumnDefinitions>
+
+        <Border x:Name="CanvasContainer"
+                Grid.Column="0"
+                Background="#252526"
+                CornerRadius="5"
+                BorderBrush="#3F3F46"
+                BorderThickness="1"
+                ClipToBounds="True"
+                SizeChanged="CanvasContainer_SizeChanged">
+            <Grid x:Name="RenderGrid"
+                  Background="Transparent"
+                  MouseDown="RenderGrid_MouseDown"
+                  MouseMove="RenderGrid_MouseMove"
+                  MouseUp="RenderGrid_MouseUp"
+                  MouseWheel="RenderGrid_MouseWheel">
+                <Image x:Name="TrailImage"
+                       Stretch="None"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Top" />
+
+                <Canvas x:Name="MainCanvas"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch" />
+            </Grid>
+        </Border>
+
+        <GridSplitter Grid.Column="1"
+                      HorizontalAlignment="Stretch"
+                      Background="Transparent" />
+
+        <Border Grid.Column="2"
+                Background="#2D2D30"
+                CornerRadius="5"
+                BorderBrush="#3F3F46"
+                BorderThickness="1"
+                Padding="10">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0"
+                           Text="Параметры симуляции"
+                           Foreground="White"
+                           FontSize="16"
+                           FontWeight="Bold"
+                           Margin="0,0,0,10" />
+
+                <GroupBox Grid.Row="1"
+                          Header="Управление"
+                          Foreground="White"
+                          BorderBrush="#3F3F46"
+                          Padding="8"
+                          Margin="0,0,0,10">
+                    <Button x:Name="ToggleSimulationButton"
+                            Content="Старт"
+                            Click="ToggleSimulationButton_Click"
+                            Height="30"
+                            Background="#28A745"
+                            Foreground="White"
+                            FontWeight="Bold"
+                            BorderThickness="0" />
+                </GroupBox>
+
+                <GroupBox Grid.Row="2"
+                          Header="Время симуляции"
+                          Foreground="White"
+                          BorderBrush="#3F3F46"
+                          Padding="8"
+                          Margin="0,0,0,10">
+                    <StackPanel>
+                        <TextBlock x:Name="SimTimeTextBlock"
+                                   Text="0d 00:00:00"
+                                   Foreground="#FFCC00"
+                                   FontFamily="Consolas"
+                                   FontWeight="Bold"
+                                   FontSize="14"
+                                   HorizontalAlignment="Center" />
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Grid.Row="3"
+                          Header="Отображение и Камера"
+                          Foreground="White"
+                          BorderBrush="#3F3F46"
+                          Padding="8"
+                          Margin="0,0,0,10">
+                    <StackPanel>
+                        <CheckBox x:Name="ShowVectorsCheckBox"
+                                  Content="Показывать векторы (V / A)"
+                                  Foreground="White"
+                                  IsChecked="True"
+                                  Margin="0,0,0,4" />
+                        <CheckBox x:Name="ShowTrajectoryCheckBox"
+                                  Content="Предсказанная траектория"
+                                  Foreground="White"
+                                  IsChecked="True"
+                                  Margin="0,0,0,8" />
+
+                        <TextBlock Text="Фокус камеры:"
+                                   Foreground="#CCCCCC"
+                                   FontSize="11"
+                                   Margin="0,0,0,4" />
+                        <ComboBox x:Name="CameraFocusComboBox"
+                                  Height="26"
+                                  SelectionChanged="CameraFocusComboBox_SelectionChanged"
+                                  SelectedIndex="0">
+                            <ComboBoxItem Content="Солнце"
+                                          Tag="Sun" />
+                            <ComboBoxItem Content="Земля"
+                                          Tag="Earth" />
+                            <ComboBoxItem Content="Корабль"
+                                          Tag="Ship" />
+                            <ComboBoxItem Content="Свободная камера"
+                                          Tag="Free" />
+                        </ComboBox>
+
+                        <Button Content="Сброс масштаба / камеры"
+                                Click="ResetCamera_Click"
+                                Margin="0,8,0,0"
+                                Height="24"
+                                Background="#3E3E42"
+                                Foreground="White"
+                                BorderThickness="0" />
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Grid.Row="4"
+                          Header="Ускорение времени"
+                          Foreground="White"
+                          BorderBrush="#3F3F46"
+                          Padding="8"
+                          Margin="0,0,0,10">
+                    <StackPanel>
+                        <TextBlock Text="Выберите скорость (UPS):"
+                                   Foreground="#CCCCCC"
+                                   Margin="0,0,0,8"
+                                   FontSize="12" />
+
+                        <ComboBox x:Name="SpeedComboBox"
+                                  SelectionChanged="SpeedComboBox_SelectionChanged"
+                                  SelectedIndex="0"
+                                  Height="28">
+                            <ComboBoxItem Content="1x (60 UPS)"
+                                          Tag="60" />
+                            <ComboBoxItem Content="25x (1500 UPS)"
+                                          Tag="1500" />
+                            <ComboBoxItem Content="1000x (60000 UPS)"
+                                          Tag="60000" />
+                            <ComboBoxItem Content="25000x (1500000 UPS)"
+                                          Tag="1500000" />
+                            <ComboBoxItem Content="Отладка (1 UPS)"
+                                          Tag="1" />
+                        </ComboBox>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Grid.Row="5"
+                          Header="Производительность"
+                          Foreground="White"
+                          BorderBrush="#3F3F46"
+                          Padding="8"
+                          Margin="0,0,0,10">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,4">
+                            <TextBlock Text="Кадры (FPS):"
+                                       Foreground="#CCCCCC"
+                                       FontSize="12" />
+                            <TextBlock x:Name="FpsTextBlock"
+                                       Text="0"
+                                       Foreground="#00FF66"
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Right"
+                                       FontSize="12" />
+                        </Grid>
+                        <Grid>
+                            <TextBlock Text="Расчетный UPS:"
+                                       Foreground="#CCCCCC"
+                                       FontSize="12" />
+                            <TextBlock x:Name="UpsTextBlock"
+                                       Text="0"
+                                       Foreground="#00E5FF"
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Right"
+                                       FontSize="12" />
+                        </Grid>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Grid.Row="6"
+                          Header="Инспектор объектов"
+                          Foreground="White"
+                          BorderBrush="#3F3F46"
+                          Padding="8">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Auto">
+                        <TextBlock x:Name="DebugTextBlock"
+                                   Foreground="#00FF66"
+                                   FontFamily="Consolas"
+                                   FontSize="11"
+                                   TextWrapping="NoWrap"
+                                   Text="Загрузка данных..." />
+                    </ScrollViewer>
+                </GroupBox>
+            </Grid>
+        </Border>
+
+        <GridSplitter Grid.Column="3"
+                      HorizontalAlignment="Stretch"
+                      Background="Transparent" />
+
+        <Border Grid.Column="4"
+                Background="#2D2D30"
+                CornerRadius="5"
+                BorderBrush="#3F3F46"
+                BorderThickness="1"
+                Padding="10">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0"
+                           Text="Гравитационные маневры"
+                           Foreground="#00E5FF"
+                           FontSize="16"
+                           FontWeight="Bold"
+                           Margin="0,0,0,10" />
+
+                <GroupBox Grid.Row="1"
+                          Header="Маршрут перелета"
+                          Foreground="White"
+                          BorderBrush="#3F3F46"
+                          Padding="8"
+                          Margin="0,0,0,10">
+                    <StackPanel>
+                        <TextBlock Text="1. Точка отбытия (Origin):"
+                                   Foreground="#CCCCCC"
+                                   FontSize="11"
+                                   Margin="0,0,0,3" />
+                        <ComboBox x:Name="OriginPlanetComboBox"
+                                  Height="26"
+                                  Margin="0,0,0,8"
+                                  SelectedIndex="2">
+                            <ComboBoxItem Content="Меркурий"
+                                          Tag="1" />
+                            <ComboBoxItem Content="Венера"
+                                          Tag="2" />
+                            <ComboBoxItem Content="Земля"
+                                          Tag="3" />
+                            <ComboBoxItem Content="Марс"
+                                          Tag="4" />
+                        </ComboBox>
+
+                        <TextBlock Text="2. Пролетное тело (Flyby Assist):"
+                                   Foreground="#CCCCCC"
+                                   FontSize="11"
+                                   Margin="0,0,0,3" />
+                        <ComboBox x:Name="FlybyPlanetComboBox"
+                                  Height="26"
+                                  Margin="0,0,0,8"
+                                  SelectedIndex="2">
+                            <ComboBoxItem Content="Венера"
+                                          Tag="2" />
+                            <ComboBoxItem Content="Земля"
+                                          Tag="3" />
+                            <ComboBoxItem Content="Марс"
+                                          Tag="4" />
+                            <ComboBoxItem Content="Юпитер"
+                                          Tag="5" />
+                        </ComboBox>
+
+                        <TextBlock Text="3. Целевое тело (Target):"
+                                   Foreground="#CCCCCC"
+                                   FontSize="11"
+                                   Margin="0,0,0,3" />
+                        <ComboBox x:Name="TargetPlanetComboBox"
+                                  Height="26"
+                                  Margin="0,0,0,10"
+                                  SelectedIndex="1">
+                            <ComboBoxItem Content="Марс"
+                                          Tag="4" />
+                            <ComboBoxItem Content="Юпитер"
+                                          Tag="5" />
+                            <ComboBoxItem Content="Сатурн"
+                                          Tag="6" />
+                            <ComboBoxItem Content="Уран"
+                                          Tag="7" />
+                            <ComboBoxItem Content="Нептун"
+                                          Tag="8" />
+                        </ComboBox>
+
+                        <Button x:Name="CalculatePlanButton"
+                                Content="Рассчитать маршрут"
+                                Click="CalculateGravityAssist_Click"
+                                Height="32"
+                                Background="#007ACC"
+                                Foreground="White"
+                                FontWeight="Bold"
+                                BorderThickness="0"
+                                Margin="0,0,0,6" />
+
+                        <Button x:Name="ClearManeuversButton"
+                                Content="Сбросить маневры"
+                                Click="ClearManeuvers_Click"
+                                Height="26"
+                                Background="#3E3E42"
+                                Foreground="White"
+                                BorderThickness="0" />
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Grid.Row="2"
+                          Header="Статус расчета"
+                          Foreground="White"
+                          BorderBrush="#3F3F46"
+                          Padding="8"
+                          Margin="0,0,0,10">
+                    <StackPanel>
+                        <TextBlock x:Name="PlannerStatusTextBlock"
+                                   Text="Готов к расчету"
+                                   Foreground="#00FF66"
+                                   FontFamily="Consolas"
+                                   FontWeight="Bold"
+                                   FontSize="12"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Grid.Row="3"
+                          Header="Параметры рассчитанного маневра"
+                          Foreground="White"
+                          BorderBrush="#3F3F46"
+                          Padding="8">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled">
+                        <TextBlock x:Name="PlanDetailsTextBlock"
+                                   Foreground="#F0F0F0"
+                                   FontFamily="Consolas"
+                                   FontSize="11"
+                                   TextWrapping="Wrap"
+                                   Text="Выберите планеты и нажмите 'Рассчитать маршрут'." />
+                    </ScrollViewer>
+                </GroupBox>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
